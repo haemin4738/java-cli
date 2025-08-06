@@ -73,27 +73,30 @@ public class ArticleController {
     }
 
     public void actionSort(Rq rq) {
-        String sortType = rq.getParam("sortType", "id"); // 기본값 id
+        String sortType = rq.getParam("sortType", "id");
         List<ArticleEntity> articles = new ArrayList<>(articleService.findForList());
 
         switch (sortType) {
             case "title":
                 articles.sort(Comparator.comparing(ArticleEntity::getTitle));
                 break;
-            case "id":
-                articles.sort(Comparator.comparing(ArticleEntity::getId));
-                break;
             case "regDate":
                 articles.sort(Comparator.comparing(ArticleEntity::getRegDate));
                 break;
+            case "id":
             default:
                 articles.sort(Comparator.comparingInt(ArticleEntity::getId));
+                break;
         }
 
         System.out.println("번호 / 제목 / 등록일");
         System.out.println("----------------------");
         for (ArticleEntity article : articles) {
-            System.out.printf("%d / %s / %s\n", article.getId(), article.getTitle(), article.getRegDate());
+            System.out.printf("%d / %s / %s\n",
+                    article.getId(),
+                    article.getTitle(),
+                    article.getRegDate() != null ? article.getRegDate() : "날짜 없음");
         }
     }
+
 }
