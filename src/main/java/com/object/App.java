@@ -24,7 +24,6 @@ public class App {
 
             switch (rq.getActionName()) {
                 case "write" -> articleController.actionWrite();
-                case "list" -> articleController.actionList(rq);
                 case "detail" -> articleController.actionView(rq);
                 case "sort" -> articleController.actionSort(rq);
                 case "exit" -> {

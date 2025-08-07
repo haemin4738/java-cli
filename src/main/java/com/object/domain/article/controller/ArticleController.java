@@ -32,48 +32,9 @@ public class ArticleController {
         System.out.println("=> 게시글이 등록되었습니다.");
     }
 
-    public void actionList(Rq rq) {
-        String keywordType = rq.getParam("keywordType", null);
-        String keyword = rq.getParam("keyword", null);
-
-        System.out.println("번호 / 제목 / 등록일");
-        System.out.println("----------------------");
-
-        for (ArticleEntity articleEntity : articleService.findForList()) {
-            // 키워드가 모두 있을 때만 출력
-            if (keywordType != null && keyword != null) {
-                if (keywordType.equals("content") && articleEntity.getContent().contains(keyword)) {
-                    System.out.printf("%d / %s / %s\n", articleEntity.getId(), articleEntity.getTitle(), articleEntity.getRegDate());
-                } else if (keywordType.equals("author") && articleEntity.getTitle().contains(keyword)) {
-                    System.out.printf("%d / %s / %s\n", articleEntity.getId(), articleEntity.getTitle(), articleEntity.getRegDate());
-                }
-            } else if (keywordType == null && keyword == null) {
-                System.out.printf("%d / %s / %s\n", articleEntity.getId(), articleEntity.getTitle(), articleEntity.getRegDate());
-            }
-        }
-    }
-
-    public void actionView(Rq rq) {
-        int id = rq.getParamsAsInt("id", -1);
-        if (id == -1) {
-            System.out.println("잘못된 게시글 번호입니다.");
-            return;
-        }
-
-        ArticleEntity articleEntity = articleService.findById(id);
-        if (articleEntity == null) {
-            System.out.println("해당 게시글이 존재하지 않습니다.");
-            return;
-        }
-
-        System.out.println("번호: " + articleEntity.getId());
-        System.out.println("제목: " + articleEntity.getTitle());
-        System.out.println("내용: " + articleEntity.getContent());
-        System.out.println("등록일: " + articleEntity.getRegDate());
-    }
 
     public void actionSort(Rq rq) {
-        String sortType = rq.getParam("sortType", "id");
+        String sortType = rq.getParam(0, "id"); // ← index 0에서 파라미터 가져옴
         List<ArticleEntity> articles = new ArrayList<>(articleService.findForList());
 
         switch (sortType) {
@@ -97,6 +58,26 @@ public class ArticleController {
                     article.getTitle(),
                     article.getRegDate() != null ? article.getRegDate() : "날짜 없음");
         }
+    }
+
+
+    public void actionView(Rq rq) {
+        int id = rq.getParamAsInt(1, -1); // ← 인덱스 기반으로 수정
+        if (id == -1) {
+            System.out.println("잘못된 게시글 번호입니다.");
+            return;
+        }
+
+        ArticleEntity articleEntity = articleService.findById(id);
+        if (articleEntity == null) {
+            System.out.println("해당 게시글이 존재하지 않습니다.");
+            return;
+        }
+
+        System.out.println("번호: " + articleEntity.getId());
+        System.out.println("제목: " + articleEntity.getTitle());
+        System.out.println("내용: " + articleEntity.getContent());
+        System.out.println("등록일: " + articleEntity.getRegDate());
     }
 
 }
